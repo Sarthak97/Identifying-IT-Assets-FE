@@ -1,23 +1,94 @@
 import React, { Component } from 'react';
 import Title from './components/Title';
-import Card from './components/Card';
-import { seed } from './seed';
+import CardList from './components/CardList';
+import SearchBox from './components/SearchBox';
+import Signin from './components/Signin';
+import Page from './components/Page';
+import Busy from './components/Busy';
 import './App.css';
 import 'tachyons';
 
-class App extends Component {
+class App extends Component 
+{
+
+  constructor()
+  {
+    super();
+
+    this.state =
+    {
+      seed : [],
+      route : "Signin",
+      isSignedIn: false,
+      info: [],
+      hasInfo: false,
+      machine: true
+    };
+  }
+
+  fetchMachines=()=>
+  {
+    this.setState({
+      machine: false
+    });
+  }
+
+  setData = (data) =>
+  {
+    this.setState({
+      seed:data,
+      machine: true
+    });
+  }
+
+  setMachineData = (data) =>
+  {
+    this.setState({
+      machine: true
+    });
+    if(data != null)
+    {
+      this.setState({
+        info: data,
+        hasInfo: true
+      });
+    }
+  }
+
+  onRouteChange = (route) => {
+    if (route === 'signout') {
+      this.setState({isSignedIn: false,
+        seed: [],
+        info: [],
+        hasInfo: false
+      });
+    } else if (route === 'home') {
+      this.setState({isSignedIn: true,
+      info: [],
+      hasInfo: false
+      });
+    }
+    this.setState({route: route});
+  }
+
   render() {
     return (
-      <div>
-        <Title />
-        {/*<SearchBox />*/}
-        <div>
-          <Card name = {seed[0].name} ip = {seed[0].IP}/>
-          <Card name = {seed[1].name} ip = {seed[1].IP}/>
-          <Card name = {seed[2].name} ip = {seed[2].IP}/>
-          <Card name = {seed[3].name} ip = {seed[3].IP}/>
-          <Card name = {seed[4].name} ip = {seed[4].IP}/>
-        </div>
+      <div className = "tc">
+        <Title isSignedIn = {this.state.isSignedIn} onRouteChange = {this.onRouteChange} hasInfo = {this.state.hasInfo}/>
+        {
+          this.state.hasInfo
+          ? <Page info = {this.state.info} />
+          :(this.state.route === 'home' && this.state.isSignedIn
+            ? <div>  
+                <SearchBox setData = {this.setData} fetchMachines= {this.fetchMachines}/>
+                {(
+                  this.state.machine
+                  ?<CardList seed = {this.state.seed} func = {this.setMachineData} fetchMachines= {this.fetchMachines}/>
+                  :<Busy />
+                )}
+              </div>
+            : <Signin onRouteChange = {this.onRouteChange}/>) 
+        }
       </div>
     );
   }
