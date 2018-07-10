@@ -10,11 +10,9 @@ import 'tachyons';
 
 class App extends Component 
 {
-
-  constructor()
+  constructor(props)
   {
-    super();
-
+    super(props);
     this.state =
     {
       seed : [],
@@ -71,9 +69,10 @@ class App extends Component
     this.setState({route: route});
   }
 
-  render() {
+  render() 
+  {
     return (
-      <div className = "tc">
+      <div className = "tc" style={{height:'100%'}}>
         <Title isSignedIn = {this.state.isSignedIn} onRouteChange = {this.onRouteChange} hasInfo = {this.state.hasInfo}/>
         {
           this.state.hasInfo
